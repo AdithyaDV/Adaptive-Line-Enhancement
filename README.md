@@ -1,7 +1,7 @@
 # DSP-Team06-Project
 Course Project Repository of Adaptive Line Enhacement
 
-Team members:
+# Team members:
 Dittakavi V Adithya - S20180020208
 
 Bezawada Vishnu Vamsi - S20180020202
