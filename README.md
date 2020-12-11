@@ -1,8 +1,11 @@
 # DSP-Team06-Project
 Course Project Repository of Adaptive Line Enhacement
+
 Team members:
 Dittakavi V Adithya - S20180020208
+
 Bezawada Vishnu Vamsi - S20180020202
+
 Manohar Sai Alapati - S20180020220
 
 This repository provides the code and the results part of the implementation of ALE - Adaptive Line Enhancer
