@@ -234,4 +234,110 @@ plot(costFNLMS, 'Linewidth', 1);
 legend('Error in Amplitude - LMS','Error in Amplitude - NLMS')
 
 %% Audio Input
+[sn,fs] = audioread("AudioSignal.mp3");
+sn = (sn(:,1)+sn(:,2))'/2;
+ts = 1/fs;
+
+len = length(sn);
+total_time = 6;
+t = 0:ts:total_time-ts;
+
+% f = 100;
+A = max(sn);
+% sn = A*sin(2*pi*f*t);
+% sound(sn,fs)
+
+wn = -2*A + 2*2*A.*(rand(1,len));
+ufsn = sn+wn;
+audiowrite('noisy_audio.wav', ufsn, 48000);
+
+%% Plotting Audio Signal
+figure(14)
+subplot(211)
+plot(t, sn(1:length(t)));title('Time domain desired signal');xlabel('Time(secs)');ylabel('Amplitude');
+subplot(212)
+plot((fs/2)*linspace(-1,1,total_time*fs), 10*log10(abs(fftshift(fft(sn(1:length(t)))))));
+title('Frequency domain');xlabel('Frequency(Hz)');ylabel('Amplitude in dB');
+% figure(2)
+% subplot(211)
+% plot(t, wn);title('Time domain Noise');xlabel('Time(secs)');ylabel('Amplitude');
+% subplot(212)
+% plot((fs/2)*linspace(-1,1,total_time*fs), 10*log10(abs(fftshift(fft(wn)))));
+% title('Frequency domain');xlabel('Frequency(Hz)');ylabel('Amplitude in dB');
+figure(15)
+subplot(211)
+plot(t, ufsn(1:length(t)));title('Time domain noisy singal');xlabel('Time(secs)');ylabel('Amplitude');
+subplot(212)
+plot((fs/2)*linspace(-1,1,total_time*fs), 10*log10(abs(fftshift(fft(ufsn(1:length(t)))))));
+title('Frequency domain');xlabel('Frequency(Hz)');ylabel('Amplitude in dB');
 audiowrite('lms_audio.wav', yn, 48000)
+
+%% LMS 
+epoch = 50;            % Number of epoch iterations
+order = 30;               % tap delays / order of filter
+delta = 1e-4;
+
+delayed = [0,order,ufsn(1:length(ufsn)-order)];
+
+[W, costFLMS] = lms(ufsn,delayed,order,delta,epoch);
+yn = filter(W,1,delayed);
+%% Outputs - FIR Filter using LMS
+figure(16)
+plot(t, ufsn(1:length(t)));title('Time domain signal - LMS');xlabel('Time(secs)');ylabel('Amplitude');
+hold('on');
+plot(t, yn(1:length(t)));legend('Desired Signal', 'Filtered Signal');
+grid on
+
+xf=freqz(ufsn);   
+% Wf=freqz(W);   
+df=freqz(sn);  
+fyf = freqz(yn);
+
+frequencies=(0:length(xf)-1)/length(xf);
+figure(17)
+plot(frequencies,10*log10(abs(xf)));
+hold on
+%plot(frequencies,10*log10(abs(Wf)),'r')
+plot(frequencies,10*log10(abs(df)),'k')
+plot(frequencies,10*log10(abs(fyf)),'g')
+
+%legend('Noisy signal','Desired signal','Filtered signal');
+xlabel('Normalized frequencies');
+ylabel('Amplitude in dB');
+title('Frequency response - LMS');
+grid on
+audiowrite('lms_audio.wav', yn, 48000)
+%% NLMS
+ufsn = sn + wn;
+order = 30;
+epoch = 50;
+delayed = [zeros(1,order),ufsn(1:length(ufsn)-order)];
+[W, costFNLMS] = nlms(ufsn,delayed,order,delta,epoch);
+yn=filter(W,1,delayed);
+
+%% Outputs - FIR Filter using NLMS
+figure(18)
+plot(t,ufsn(1:length(t)));title('Time domain signal - NLMS');xlabel('Time(secs)');ylabel('Amplitude');
+hold('on');
+plot(t, yn(1:length(t)));legend('Desired Signal', 'Filtered Signal');
+grid on
+
+xf=freqz(ufsn);   
+% Wf=freqz(W);   
+df=freqz(sn);  
+fyf = freqz(yn);
+
+frequencies=(0:length(xf)-1)/length(xf);
+figure(19)
+plot(frequencies,10*log10(abs(xf)));
+hold on
+%plot(frequencies,10*log10(abs(Wf)),'r')
+plot(frequencies,10*log10(abs(df)),'k')
+plot(frequencies,10*log10(abs(fyf)),'g')
+
+legend('Noisy signal','Desired signal','Filtered signal');
+xlabel('Normalized frequencies');
+ylabel('Amplitude in dB');
+title('Frequency response - NLMS');
+grid on
+audiowrite('nlms_audio.wav', yn, 48000)
