@@ -3,13 +3,13 @@ Course Project Repository of Adaptive Line Enhacement
 
 ## Team members:
 Dittakavi V Adithya
-_adithya.d18@iiits.in_
+(_adithya.d18@iiits.in_)
 
 Bezawada Vishnu Vamsi
-_vishnuvamsi.b18@iiits.in_
+(_vishnuvamsi.b18@iiits.in_)
 
 Manohar Sai Alapati
-_manoharsai.a18@iiits.in_
+(_manoharsai.a18@iiits.in_)
 
 ## Abstract
 
